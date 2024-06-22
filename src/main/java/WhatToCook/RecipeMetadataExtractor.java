@@ -24,8 +24,6 @@ public class RecipeMetadataExtractor {
     ObjectMapper objectMapper = new ObjectMapper();
 
     for (JsonNode node : jsonNodeList) {
-      System.out.println(node);
-      System.out.println("\n");
       if (node.isObject() && "Recipe".equals(node.path("@type").asText())) {
         return objectMapper.treeToValue(node, RecipeDecoding.class);
       }

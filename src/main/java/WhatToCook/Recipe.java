@@ -1,0 +1,19 @@
+package WhatToCook;
+
+import java.util.List;
+
+public record Recipe(
+    String image_url,
+    String name,
+    String description,
+    String cookTime,
+    String prepTime,
+    String totalTime,
+    String recipeUrl,
+    String keywords,
+    Nutrition nutrition,
+    List<String> recipeYield,
+    List<String> recipeCategory,
+    List<String> recipeCuisine,
+    List<String> recipeIngredient,
+    List<String> recipeInstructions) {}

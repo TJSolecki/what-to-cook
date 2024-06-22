@@ -11,9 +11,9 @@ public record RecipeDecoding(
     String cookTime,
     String prepTime,
     String totalTime,
-    String recipeUrl,
     String keywords,
-    NutritionDecoding nutrition,
+    String mainEntityOfPage,
+    Nutrition nutrition,
     List<String> recipeYield,
     List<String> recipeCategory,
     List<String> recipeCuisine,
@@ -24,7 +24,7 @@ public record RecipeDecoding(
 record InstructionDecoding(String text, String name) {}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-record NutritionDecoding(
+record Nutrition(
     String calories,
     String carbohydrateContent,
     String proteinContent,

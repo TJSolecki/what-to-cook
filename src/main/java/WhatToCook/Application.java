@@ -9,15 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class Application {
 
   public static void main(String[] args) {
-    RecipeMetadataExtractor extractor = new RecipeMetadataExtractor();
-    RecipeDecoding recipe;
-    try {
-      recipe = extractor.get_recipe("https://downshiftology.com/recipes/shakshuka/");
-    } catch (Exception e) {
-      System.out.println(e);
-      return;
-    }
-    System.out.println(recipe);
     SpringApplication.run(Application.class, args);
   }
 }
