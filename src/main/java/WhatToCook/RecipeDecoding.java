@@ -1,15 +1,11 @@
 package WhatToCook;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Recipe(
-    // Required property
-    @NotNull List<String> image,
-
-    // Optional properties
+public record RecipeDecoding(
+    List<String> image,
     String name,
     String description,
     String cookTime,
@@ -17,18 +13,18 @@ public record Recipe(
     String totalTime,
     String recipeUrl,
     String keywords,
-    Nutrition nutrition,
+    NutritionDecoding nutrition,
     List<String> recipeYield,
     List<String> recipeCategory,
     List<String> recipeCuisine,
     List<String> recipeIngredient,
-    List<Instruction> recipeInstructions) {}
+    List<InstructionDecoding> recipeInstructions) {}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-record Instruction(String text, String name) {}
+record InstructionDecoding(String text, String name) {}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-record Nutrition(
+record NutritionDecoding(
     String calories,
     String carbohydrateContent,
     String proteinContent,

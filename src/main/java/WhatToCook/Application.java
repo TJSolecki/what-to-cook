@@ -10,7 +10,7 @@ public class Application {
 
   public static void main(String[] args) {
     RecipeMetadataExtractor extractor = new RecipeMetadataExtractor();
-    Recipe recipe;
+    RecipeDecoding recipe;
     try {
       recipe = extractor.get_recipe("https://downshiftology.com/recipes/shakshuka/");
     } catch (Exception e) {

@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class RecipeMetadataExtractor {
-  public Recipe get_recipe(String url) throws IOException {
+  public RecipeDecoding get_recipe(String url) throws IOException {
     Document document = Jsoup.connect(url).get();
 
     Element scriptElement = document.selectFirst("script[type=application/ld+json]");
@@ -27,7 +27,7 @@ public class RecipeMetadataExtractor {
       System.out.println(node);
       System.out.println("\n");
       if (node.isObject() && "Recipe".equals(node.path("@type").asText())) {
-        return objectMapper.treeToValue(node, Recipe.class);
+        return objectMapper.treeToValue(node, RecipeDecoding.class);
       }
     }
     throw new RuntimeException("Recipe type object not in array");
