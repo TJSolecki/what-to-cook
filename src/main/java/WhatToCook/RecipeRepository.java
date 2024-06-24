@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,10 +36,10 @@ public class RecipeRepository {
         recipe_decoding.recipeCategory(),
         recipe_decoding.recipeCuisine(),
         recipe_decoding.recipeIngredient(),
-        recipe_decoding.recipeInstructions().stream()
-            .map(
-                (instruction) -> {
-                  return instruction.text();
+        IntStream.range(0, recipe_decoding.recipeInstructions().size())
+            .mapToObj(
+                (i) -> {
+                  return new Instruction(i + 1, recipe_decoding.recipeInstructions().get(i).text());
                 })
             .collect(Collectors.toList()));
   }

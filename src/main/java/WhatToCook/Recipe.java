@@ -16,4 +16,6 @@ public record Recipe(
     List<String> recipeCategory,
     List<String> recipeCuisine,
     List<String> recipeIngredient,
-    List<String> recipeInstructions) {}
+    List<Instruction> recipeInstructions) {}
+
+record Instruction(int step_number, String text) {}
