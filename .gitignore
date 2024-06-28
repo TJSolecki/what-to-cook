@@ -39,3 +39,26 @@ out/
 ## Test Files used in development
 foo.json
 bar.json
+
+src/main/gui/logs
+src/main/gui/*.log
+src/main/gui/npm-debug.log*
+src/main/gui/yarn-debug.log*
+src/main/gui/yarn-error.log*
+src/main/gui/pnpm-debug.log*
+src/main/gui/lerna-debug.log*
+
+src/main/gui/node_modules
+src/main/gui/dist
+src/main/gui/dist-ssr
+src/main/gui/*.local
+
+src/main/gui/.vscode/*
+src/main/gui/!.vscode/extensions.json
+src/main/gui/.idea
+src/main/gui/.DS_Store
+src/main/gui/*.suo
+src/main/gui/*.ntvs*
+src/main/gui/*.njsproj
+src/main/gui/*.sln
+src/main/gui/*.sw?
