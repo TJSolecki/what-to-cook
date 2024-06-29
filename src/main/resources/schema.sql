@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS recipe_cuisine (
     FOREIGN KEY (cuisine_id) REFERENCES cuisines(cuisine_id)
 );
 
-CREATE TABLE IF NOT EXISTS recipes (
+CREATE TABLE IF NOT EXISTS recipe (
     recipe_id SERIAL PRIMARY KEY,
     image_url VARCHAR(255),
     name VARCHAR(255),

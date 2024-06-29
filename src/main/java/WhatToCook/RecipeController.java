@@ -16,7 +16,7 @@ public class RecipeController {
   }
 
   @GetMapping("/")
-  List<Recipe> get_recipes() {
+  List<RecipeIntermediate> get_recipes() {
     return recipe_repository.get_recipes();
   }
 

@@ -11,18 +11,18 @@ import org.springframework.stereotype.Repository;
 public class RecipeRepository {
   private RecipeMetadataExtractor extractor = new RecipeMetadataExtractor();
 
-  List<Recipe> recipes;
+  List<RecipeIntermediate> recipes;
 
   public RecipeRepository() {
-    recipes = new ArrayList<Recipe>();
+    recipes = new ArrayList<RecipeIntermediate>();
   }
 
-  List<Recipe> get_recipes() {
+  List<RecipeIntermediate> get_recipes() {
     return recipes;
   }
 
-  Recipe create_recipe_from_decoding(RecipeDecoding recipe_decoding) {
-    return new Recipe(
+  RecipeIntermediate create_recipe_from_decoding(RecipeDecoding recipe_decoding) {
+    return new RecipeIntermediate(
         recipe_decoding.image().get(0),
         recipe_decoding.name(),
         recipe_decoding.description(),

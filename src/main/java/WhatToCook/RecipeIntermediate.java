@@ -2,7 +2,7 @@ package WhatToCook;
 
 import java.util.List;
 
-public record Recipe(
+public record RecipeIntermediate(
     String image_url,
     String name,
     String description,
