@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS nutrition (
     serving_size VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS instructions (
+CREATE TABLE IF NOT EXISTS instruction (
     instruction_id SERIAL PRIMARY KEY,
     recipe_id INT,
     step_number INT,
@@ -21,21 +21,21 @@ CREATE TABLE IF NOT EXISTS instructions (
     FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
 );
 
-CREATE TABLE IF NOT EXISTS keywords (
+CREATE TABLE IF NOT EXISTS keyword (
     keyword_id SERIAL PRIMARY KEY,
     recipe_id INT,
     keyword VARCHAR(50),
     FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
 );
 
-CREATE TABLE IF NOT EXISTS ingredients (
+CREATE TABLE IF NOT EXISTS ingredient (
     ingredient_id SERIAL PRIMARY KEY,
     recipe_id INT,
     ingredient_name VARCHAR(255),
     FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
 );
 
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS category (
     category_id SERIAL PRIMARY KEY,
     category_name VARCHAR(255) UNIQUE
 );
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS recipe_category (
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
-CREATE TABLE IF NOT EXISTS cuisines (
+CREATE TABLE IF NOT EXISTS cuisine (
     cuisine_id SERIAL PRIMARY KEY,
     cuisine_name VARCHAR(255) UNIQUE
 );

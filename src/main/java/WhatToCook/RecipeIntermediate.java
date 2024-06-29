@@ -11,7 +11,7 @@ public record RecipeIntermediate(
     String totalTime,
     String recipeUrl,
     String keywords,
-    Nutrition nutrition,
+    NutritionIntermediate nutrition,
     List<String> recipeYield,
     List<String> recipeCategory,
     List<String> recipeCuisine,

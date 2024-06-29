@@ -13,7 +13,7 @@ public record RecipeDecoding(
     String totalTime,
     String keywords,
     String mainEntityOfPage,
-    Nutrition nutrition,
+    NutritionIntermediate nutrition,
     List<String> recipeYield,
     List<String> recipeCategory,
     List<String> recipeCuisine,
@@ -24,7 +24,7 @@ public record RecipeDecoding(
 record InstructionDecoding(String text, String name) {}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-record Nutrition(
+record NutritionIntermediate(
     String calories,
     String carbohydrateContent,
     String proteinContent,
