@@ -15,54 +15,54 @@ CREATE TABLE IF NOT EXISTS nutrition (
 
 CREATE TABLE IF NOT EXISTS instruction (
     instruction_id SERIAL PRIMARY KEY,
-    recipe_id INT,
+    recipe INT,
     step_number INT,
     instruction TEXT,
-    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
+    FOREIGN KEY (recipe) REFERENCES recipe(recipe)
 );
 
 CREATE TABLE IF NOT EXISTS keyword (
     keyword_id SERIAL PRIMARY KEY,
-    recipe_id INT,
-    keyword VARCHAR(50),
-    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
+    recipe INT,
+    keyword_name VARCHAR(50),
+    FOREIGN KEY (recipe) REFERENCES recipe(recipe)
 );
 
 CREATE TABLE IF NOT EXISTS ingredient (
     ingredient_id SERIAL PRIMARY KEY,
-    recipe_id INT,
+    recipe INT,
     ingredient_name VARCHAR(255),
-    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
+    FOREIGN KEY (recipe) REFERENCES recipe(recipe)
 );
 
 CREATE TABLE IF NOT EXISTS category (
-    category_id SERIAL PRIMARY KEY,
-    category_name VARCHAR(255) UNIQUE
+    category SERIAL PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE,
 );
 
 CREATE TABLE IF NOT EXISTS recipe_category (
-    recipe_id INT,
-    category_id INT,
-    PRIMARY KEY (recipe_id, category_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
-    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+    recipe INT,
+    category INT,
+    PRIMARY KEY (recipe, category),
+    FOREIGN KEY (recipe) REFERENCES recipe(recipe),
+    FOREIGN KEY (category) REFERENCES category(category)
 );
 
 CREATE TABLE IF NOT EXISTS cuisine (
-    cuisine_id SERIAL PRIMARY KEY,
-    cuisine_name VARCHAR(255) UNIQUE
+    cuisine SERIAL PRIMARY KEY,
+    cuisine_name VARCHAR(255) UNIQUE,
 );
 
 CREATE TABLE IF NOT EXISTS recipe_cuisine (
-    recipe_id INT,
-    cuisine_id INT,
-    PRIMARY KEY (recipe_id, cuisine_id),
-    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
-    FOREIGN KEY (cuisine_id) REFERENCES cuisines(cuisine_id)
+    recipe INT,
+    cuisine INT,
+    PRIMARY KEY (recipe, cuisine),
+    FOREIGN KEY (recipe) REFERENCES recipes(recipe),
+    FOREIGN KEY (cuisine) REFERENCES cuisine(cuisine)
 );
 
 CREATE TABLE IF NOT EXISTS recipe (
-    recipe_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     image_url VARCHAR(255),
     name VARCHAR(255),
     description TEXT,
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS recipe (
     total_time VARCHAR(50),
     recipe_url VARCHAR(255),
     recipe_yield VARCHAR(255),
-    nutrition_id INT,
-    FOREIGN KEY (nutrition_id) REFERENCES nutrition(nutrition_id)
+    nutrition INT,
+    FOREIGN KEY (nutrition) REFERENCES nutrition(nutrition)
 );
 

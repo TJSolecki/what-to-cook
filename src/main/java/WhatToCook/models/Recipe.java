@@ -1,6 +1,5 @@
 package WhatToCook.models;
 
-import java.util.List;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -15,15 +14,33 @@ public record Recipe(
     String total_time,
     String recipe_url,
     String recipe_yield,
-    List<Instruction> instructions,
+    Set<Instruction> instructions,
     Set<Keyword> keywords,
     Set<RecipeCuisine> cuisines,
     Set<RecipeCategory> categories,
     AggregateReference<Nutrition, Integer> nutrition_id) {
-  void addCusine(Cuisine cuisine) {
+  void addCuisine(String cuisine_name) {
+    Cuisine cuisine = new Cuisine(null, cuisine_name);
     this.cuisines()
         .add(
             new RecipeCuisine(
-                AggregateReference.to(this.id()), AggregateReference.to(cuisine.cuisine_id())));
+                AggregateReference.to(this.id()), AggregateReference.to(cuisine.cuisine())));
+  }
+
+  void addCategory(String category_name) {
+    Category category = new Category(null, category_name);
+    this.categories()
+        .add(
+            new RecipeCategory(
+                AggregateReference.to(this.id), AggregateReference.to(category.category())));
+  }
+
+  void addKeyword(String keyword_name) {
+    this.keywords().add(new Keyword(null, AggregateReference.to(this.id), keyword_name));
+  }
+
+  void addInstruction(int step_number, String instruction) {
+    this.instructions()
+        .add(new Instruction(null, AggregateReference.to(this.id), step_number, instruction));
   }
 }

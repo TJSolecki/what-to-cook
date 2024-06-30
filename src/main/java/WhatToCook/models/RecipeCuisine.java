@@ -5,5 +5,4 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Table("recipe_cusine")
 public record RecipeCuisine(
-    AggregateReference<Recipe, Integer> recipe_id,
-    AggregateReference<Cuisine, Integer> cuisine_id) {}
+    AggregateReference<Recipe, Integer> recipe, AggregateReference<Cuisine, Integer> cuisine) {}

@@ -5,6 +5,6 @@ import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 public record Instruction(
     @Id Integer instruction_id,
-    AggregateReference<Recipe, Integer> recipe_id,
+    AggregateReference<Recipe, Integer> recipe,
     Integer step_number,
     String instruction) {}

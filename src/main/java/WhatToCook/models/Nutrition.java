@@ -3,7 +3,7 @@ package WhatToCook.models;
 import org.springframework.data.annotation.Id;
 
 public record Nutrition(
-    @Id Integer nutrition_id,
+    @Id Integer nutrition,
     String calories,
     String carbohydrateContent,
     String proteinContent,
