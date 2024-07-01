@@ -1,31 +1,64 @@
 package WhatToCook;
 
+import WhatToCook.models.*;
+import WhatToCook.repositories.NutritionRepository;
+import WhatToCook.repositories.RecipeRepository;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recipe/")
 public class RecipeController {
-  private final RecipeRepository recipe_repository;
+  private RecipeRepository recipeRepository;
+  private NutritionRepository nutritionRepository;
+  private final RecipeMetadataExtractor extractor;
 
-  public RecipeController(RecipeRepository recipe_repository) {
-    this.recipe_repository = recipe_repository;
+  public RecipeController(
+      RecipeRepository recipeRepository,
+      RecipeMetadataExtractor recipeMetadataExtractor,
+      NutritionRepository nutritionRepository) {
+    this.extractor = recipeMetadataExtractor;
+    this.recipeRepository = recipeRepository;
+    this.nutritionRepository = nutritionRepository;
   }
 
   @GetMapping("/")
-  List<RecipeIntermediate> get_recipes() {
-    return recipe_repository.get_recipes();
+  List<Recipe> get_recipes() {
+    return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/")
   void create(@Valid @RequestBody RecipeUrl recipe_url) throws IOException {
-    recipe_repository.create_recipe_from_url(recipe_url.url());
+    RecipeDecoding decoding = extractor.get_recipe(recipe_url.url());
+    RecipeIntermediate recipeIntermediate = create_recipe_from_decoding(decoding);
+
+    Nutrition nutrition = new Nutrition(recipeIntermediate.nutrition());
+    nutrition = nutritionRepository.save(nutrition);
+
+    Recipe recipe = new Recipe(recipeIntermediate, AggregateReference.to(nutrition.nutrition()));
+    for (String keyword : recipeIntermediate.keywords().split(", ")) {
+      recipe.addKeyword(keyword);
+    }
+    for (String cuisine_name : recipeIntermediate.recipeCuisine()) {
+      recipe.addCuisine(cuisine_name);
+    }
+    for (String category_name : recipeIntermediate.recipeCategory()) {
+      recipe.addCategory(category_name);
+    }
+    for (Instruction instruction : recipeIntermediate.recipeInstructions()) {
+      recipe.addInstruction(instruction.step_number(), instruction.text());
+    }
+
+    recipeRepository.save(recipe);
   }
 
   RecipeIntermediate create_recipe_from_decoding(RecipeDecoding recipe_decoding) {

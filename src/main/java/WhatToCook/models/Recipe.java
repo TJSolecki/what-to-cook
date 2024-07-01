@@ -1,5 +1,7 @@
 package WhatToCook.models;
 
+import WhatToCook.RecipeIntermediate;
+import java.util.HashSet;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -19,7 +21,26 @@ public record Recipe(
     Set<RecipeCuisine> cuisines,
     Set<RecipeCategory> categories,
     AggregateReference<Nutrition, Integer> nutrition_id) {
-  void addCuisine(String cuisine_name) {
+  public Recipe(
+      RecipeIntermediate recipeIntermediate, AggregateReference<Nutrition, Integer> nutrition_id) {
+    this(
+        null,
+        recipeIntermediate.image_url(),
+        recipeIntermediate.name(),
+        recipeIntermediate.description(),
+        recipeIntermediate.cookTime(),
+        recipeIntermediate.prepTime(),
+        recipeIntermediate.totalTime(),
+        recipeIntermediate.recipeUrl(),
+        String.join(", ", recipeIntermediate.recipeYield()),
+        new HashSet<Instruction>(),
+        new HashSet<Keyword>(),
+        new HashSet<RecipeCuisine>(),
+        new HashSet<RecipeCategory>(),
+        nutrition_id);
+  }
+
+  public void addCuisine(String cuisine_name) {
     Cuisine cuisine = new Cuisine(null, cuisine_name);
     this.cuisines()
         .add(
@@ -27,7 +48,7 @@ public record Recipe(
                 AggregateReference.to(this.id()), AggregateReference.to(cuisine.cuisine())));
   }
 
-  void addCategory(String category_name) {
+  public void addCategory(String category_name) {
     Category category = new Category(null, category_name);
     this.categories()
         .add(
@@ -35,11 +56,11 @@ public record Recipe(
                 AggregateReference.to(this.id), AggregateReference.to(category.category())));
   }
 
-  void addKeyword(String keyword_name) {
+  public void addKeyword(String keyword_name) {
     this.keywords().add(new Keyword(null, AggregateReference.to(this.id), keyword_name));
   }
 
-  void addInstruction(int step_number, String instruction) {
+  public void addInstruction(int step_number, String instruction) {
     this.instructions()
         .add(new Instruction(null, AggregateReference.to(this.id), step_number, instruction));
   }
