@@ -1,0 +1,38 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.1'
+	id "io.freefair.lombok" version "8.6"
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.what.to.cook'
+version = '0.1'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.jsoup:jsoup:1.17.2'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.data:spring-data-jdbc'
+
+	runtimeOnly 'com.h2database:h2'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	developmentOnly "org.springframework.boot:spring-boot-devtools"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+
+}
