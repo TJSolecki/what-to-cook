@@ -1,9 +1,9 @@
-package com.what.to.cook.structs;
+package com.what.to.cook.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Nutrition(
+public record NutritionJson(
         String calories,
         String carbohydrateContent,
         String proteinContent,

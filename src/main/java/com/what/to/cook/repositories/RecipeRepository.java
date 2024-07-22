@@ -1,4 +1,4 @@
-package com.what.to.cook;
+package com.what.to.cook.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
