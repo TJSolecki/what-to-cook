@@ -7,8 +7,13 @@ import com.what.to.cook.models.Nutrition;
 import com.what.to.cook.models.Recipe;
 import com.what.to.cook.repositories.NutritionRepository;
 import com.what.to.cook.repositories.RecipeRepository;
+import com.what.to.cook.structs.RecipeDto;
 import com.what.to.cook.structs.RecipeRequest;
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -40,7 +45,12 @@ public class RecipeController {
     }
 
     @GetMapping
-    public Iterable<Recipe> getRecipes() {
-        return recipeRepository.findAll();
+    public List<RecipeDto> getRecipes() {
+        return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
+            .map(recipe -> {
+                Nutrition nutrition = nutritionRepository.findById(Objects.requireNonNull(recipe.getNutritionId().getId())).orElse(null);
+                return new RecipeDto(recipe, nutrition);
+            })
+            .collect(Collectors.toList());
     }
 }

@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.what.to.cook.models.Recipe;
 import com.what.to.cook.structs.RecipeRequest;
-
 import java.util.ArrayList;
 import java.util.Objects;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,8 +16,7 @@ import org.springframework.http.ResponseEntity;
 public class RecipeControllerTest {
 
     @Test
-    void contentLoads() {
-    }
+    void contentLoads() {}
 
     @Autowired
     TestRestTemplate rest;
@@ -27,9 +24,9 @@ public class RecipeControllerTest {
     @Test
     void postShouldReturnOkStatus() {
         ResponseEntity<String> response = rest.postForEntity(
-                "/api/recipe",
-                new RecipeRequest("https://downshiftology.com/recipes/shakshuka/"),
-                String.class
+            "/api/recipe",
+            new RecipeRequest("https://downshiftology.com/recipes/shakshuka/"),
+            String.class
         );
         assertEquals(response.getStatusCode().value(), 200);
     }
@@ -43,13 +40,13 @@ public class RecipeControllerTest {
     @Test
     void postShouldPersistRecipeToDb() {
         ResponseEntity<String> response = rest.postForEntity(
-                "/api/recipe",
-                new RecipeRequest("https://downshiftology.com/recipes/shakshuka/"),
-                String.class
+            "/api/recipe",
+            new RecipeRequest("https://downshiftology.com/recipes/shakshuka/"),
+            String.class
         );
         ResponseEntity<ArrayList<Recipe>> res = (ResponseEntity<ArrayList<Recipe>>) rest.getForEntity(
-                "/api/recipe",
-                new ArrayList<Recipe>().getClass()
+            "/api/recipe",
+            new ArrayList<Recipe>().getClass()
         );
         assertFalse(Objects.requireNonNull(res.getBody()).isEmpty());
     }
