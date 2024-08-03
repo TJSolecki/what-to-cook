@@ -19,6 +19,7 @@ public class Recipe {
     private String cookTime;
     private String prepTime;
     private String totalTime;
+    private String author;
     private String recipeUrl;
     private String recipeYield;
     private AggregateReference<Nutrition, Integer> nutritionId;
@@ -31,6 +32,7 @@ public class Recipe {
             .cookTime(recipeJson.cookTime())
             .prepTime(recipeJson.prepTime())
             .totalTime(recipeJson.totalTime())
+            .author(recipeJson.author())
             .recipeYield(String.join(", ", recipeJson.recipeYield()))
             .build();
     }

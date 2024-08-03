@@ -25,6 +25,9 @@ public class Nutrition {
     private String servingSize;
 
     public static Nutrition fromJson(NutritionJson json) {
+        if (json == null) {
+            return null;
+        }
         return builder()
             .calories(json.calories())
             .carbohydrateContent(json.carbohydrateContent())

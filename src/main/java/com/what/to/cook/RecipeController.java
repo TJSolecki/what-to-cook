@@ -39,8 +39,10 @@ public class RecipeController {
         RecipeJson recipeJson = getRecipeFromUrl(requestBody.url());
         Recipe recipe = Recipe.fromRecipeJson(recipeJson);
         Nutrition nutrition = Nutrition.fromJson(recipeJson.nutrition());
-        nutritionRepository.save(nutrition);
-        recipe.setNutritionId(AggregateReference.to(nutrition.getId()));
+        if (nutrition != null) {
+            nutritionRepository.save(nutrition);
+            recipe.setNutritionId(AggregateReference.to(nutrition.getId()));
+        }
         recipeRepository.save(recipe);
     }
 
@@ -48,9 +50,12 @@ public class RecipeController {
     public List<RecipeDto> getRecipes() {
         return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
             .map(recipe -> {
-                Nutrition nutrition = nutritionRepository
-                    .findById(Objects.requireNonNull(recipe.getNutritionId().getId()))
-                    .orElse(null);
+                Nutrition nutrition = null;
+                if (recipe.getNutritionId() != null) {
+                    nutrition = nutritionRepository
+                        .findById(Objects.requireNonNull(recipe.getNutritionId().getId()))
+                        .orElse(null);
+                }
                 return new RecipeDto(recipe, nutrition);
             })
             .collect(Collectors.toList());
