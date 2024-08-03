@@ -1,18 +1,17 @@
 package com.what.to.cook.utils;
 
-import com.what.to.cook.json.RecipeJson;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.what.to.cook.json.RecipeJson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public final class RecipeUtils {
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static RecipeJson getRecipeFromUrl(String url) throws IOException {

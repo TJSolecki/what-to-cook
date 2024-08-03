@@ -1,12 +1,11 @@
 package com.what.to.cook;
 
 import com.what.to.cook.utils.RecipeUtils;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-
-@SpringBootTest()
+@SpringBootTest
 public class RecipeUtilsTest {
 
     @Test

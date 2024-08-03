@@ -13,5 +13,4 @@ public class RestSpringService {
     public static void main(String[] args) {
         SpringApplication.run(RestSpringService.class, args);
     }
-
 }

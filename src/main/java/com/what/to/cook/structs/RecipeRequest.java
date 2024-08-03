@@ -1,4 +1,3 @@
 package com.what.to.cook.structs;
 
-public record RecipeRequest(String url) {
-}
+public record RecipeRequest(String url) {}
