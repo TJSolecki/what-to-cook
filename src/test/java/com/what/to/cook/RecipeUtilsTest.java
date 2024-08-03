@@ -9,7 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class RecipeUtilsTest {
 
     @Test
-    public void getRecipeFromUrlShouldNotThrowOnValidUrl() throws IOException {
+    public void getRecipeFromUrlShouldNotThrowUrlWithGraphLd() throws IOException {
         RecipeUtils.getRecipeFromUrl("https://downshiftology.com/recipes/shakshuka/");
+    }
+
+    @Test
+    public void getRecipeFromUrlShouldNotThrowOnUrlWithArrayLd() throws IOException {
+        RecipeUtils.getRecipeFromUrl("https://www.seriouseats.com/food-lab-no-boil-baked-ziti-recipe");
     }
 }

@@ -48,7 +48,9 @@ public class RecipeController {
     public List<RecipeDto> getRecipes() {
         return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
             .map(recipe -> {
-                Nutrition nutrition = nutritionRepository.findById(Objects.requireNonNull(recipe.getNutritionId().getId())).orElse(null);
+                Nutrition nutrition = nutritionRepository
+                    .findById(Objects.requireNonNull(recipe.getNutritionId().getId()))
+                    .orElse(null);
                 return new RecipeDto(recipe, nutrition);
             })
             .collect(Collectors.toList());
