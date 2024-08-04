@@ -2,7 +2,7 @@ package com.what.to.cook.utils;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.mindrot.jbcrypt.BCrypt;
 
 public final class AuthUtils {
 
@@ -12,10 +12,7 @@ public final class AuthUtils {
     }
 
     public static String generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[8];
-        random.nextBytes(saltBytes);
-        return Base64.getEncoder().encodeToString(saltBytes);
+        return BCrypt.gensalt();
     }
 
     public static String hashPassword(String password, String salt) {

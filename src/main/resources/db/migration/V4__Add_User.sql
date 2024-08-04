@@ -1,6 +1,14 @@
-CREATE TABLE user (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE users (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    salt VARCHAR(8) NOT NULL
+    salt VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE session (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    session_token VARCHAR(255) NOT NULL,
+    user_id INTEGER NOT NULL,
+    created TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
