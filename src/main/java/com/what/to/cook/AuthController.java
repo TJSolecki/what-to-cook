@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -77,7 +74,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return ResponseEntity.badRequest().body("No session token found");
@@ -88,6 +85,11 @@ public class AuthController {
                 String sessionToken = cookie.getValue();
                 Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
                 if (session != null) {
+                    // Remove the session token cookie
+                    Cookie deleteCookie = new Cookie("session-token", "");
+                    deleteCookie.setMaxAge(0);
+                    response.addCookie(deleteCookie);
+
                     sessionRepository.delete(session);
                     return ResponseEntity.ok("Logged out successfully");
                 }
