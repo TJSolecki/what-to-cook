@@ -2,9 +2,12 @@ package com.what.to.cook;
 
 import static com.what.to.cook.utils.RecipeUtils.getRecipeFromUrl;
 
+import com.what.to.cook.json.InstructionJson;
 import com.what.to.cook.json.RecipeJson;
+import com.what.to.cook.models.Instruction;
 import com.what.to.cook.models.Nutrition;
 import com.what.to.cook.models.Recipe;
+import com.what.to.cook.repositories.InstructionRepository;
 import com.what.to.cook.repositories.NutritionRepository;
 import com.what.to.cook.repositories.RecipeRepository;
 import com.what.to.cook.structs.RecipeDto;
@@ -34,6 +37,9 @@ public class RecipeController {
     @Autowired
     private final NutritionRepository nutritionRepository;
 
+    @Autowired
+    private final InstructionRepository instructionRepository;
+
     @PostMapping
     public void addRecipe(@RequestBody RecipeRequest requestBody) throws IOException {
         RecipeJson recipeJson = getRecipeFromUrl(requestBody.url());
@@ -44,6 +50,17 @@ public class RecipeController {
             recipe.setNutritionId(AggregateReference.to(nutrition.getId()));
         }
         recipeRepository.save(recipe);
+        for (int i = 1; i < recipeJson.recipeInstructions().size() + 1; i++) {
+            InstructionJson instructionJson = recipeJson.recipeInstructions().get(i - 1);
+            Instruction instruction = new Instruction(
+                null,
+                AggregateReference.to(recipe.getId()),
+                i,
+                instructionJson.name(),
+                instructionJson.text()
+            );
+            instructionRepository.save(instruction);
+        }
     }
 
     @GetMapping
@@ -56,7 +73,12 @@ public class RecipeController {
                         .findById(Objects.requireNonNull(recipe.getNutritionId().getId()))
                         .orElse(null);
                 }
-                return new RecipeDto(recipe, nutrition);
+
+                return new RecipeDto(
+                    recipe,
+                    nutrition,
+                    instructionRepository.findByRecipeId(AggregateReference.to(recipe.getId()))
+                );
             })
             .collect(Collectors.toList());
     }
