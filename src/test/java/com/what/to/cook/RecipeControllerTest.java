@@ -32,9 +32,9 @@ public class RecipeControllerTest {
     }
 
     @Test
-    void getShouldReturnOkStatus() {
+    void getShouldReturnForbiddenStatusWithNoSession() {
         ResponseEntity<String> response = rest.getForEntity("/api/recipe", String.class);
-        assertEquals(response.getStatusCode().value(), 200);
+        assertEquals(response.getStatusCode().value(), 403);
     }
 
     @Test

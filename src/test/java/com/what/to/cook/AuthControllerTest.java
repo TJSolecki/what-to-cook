@@ -1,11 +1,15 @@
 package com.what.to.cook;
 
+import jakarta.servlet.http.Cookie;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -17,11 +21,11 @@ final class AuthControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void testRegisterValidUser() throws Exception {
-        String email = "test@example.com";
+    void registerShouldRegisterUserAndReturnValidSession() throws Exception {
+        String email = "test44@example.com";
         String password = "password123";
 
-        mockMvc
+        MvcResult result = mockMvc
             .perform(
                 MockMvcRequestBuilders.post("/api/auth/register")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -29,7 +33,13 @@ final class AuthControllerTest {
                     .param("password", password)
             )
             .andExpect(MockMvcResultMatchers.status().isCreated())
-            .andExpect(MockMvcResultMatchers.cookie().exists("session-token"));
+            .andExpect(MockMvcResultMatchers.cookie().exists("session-token"))
+            .andReturn();
+
+        Cookie sessionToken = result.getResponse().getCookie("session-token");
+        mockMvc
+            .perform(MockMvcRequestBuilders.get("/api/recipe").cookie(sessionToken))
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test

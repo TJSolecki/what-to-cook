@@ -5,10 +5,13 @@ import com.what.to.cook.models.User;
 import com.what.to.cook.repositories.SessionRepository;
 import com.what.to.cook.repositories.UserRepository;
 import com.what.to.cook.utils.AuthUtils;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.http.HttpStatus;
@@ -36,7 +39,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid email address");
         }
 
-        if (userRepository.findByEmail(email).orElse(null) == null) {
+        if (userRepository.findByEmail(email).orElse(null) != null) {
             return ResponseEntity.badRequest().body("Email already in use");
         }
 
@@ -97,5 +100,35 @@ public class AuthController {
         }
 
         return ResponseEntity.badRequest().body("Invalid session token");
+    }
+
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    public static class WhoAmIResponse {
+
+        @NonNull
+        String message;
+
+        @Nullable
+        Integer userId;
+    }
+
+    @GetMapping("/who-am-i")
+    public ResponseEntity<WhoAmIResponse> whoAmI(HttpServletRequest request, HttpServletResponse response) {
+        String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
+        if (sessionToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new WhoAmIResponse("No session token provided.")
+            );
+        }
+
+        Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new WhoAmIResponse("Session token found, but not valid.")
+            );
+        }
+
+        return ResponseEntity.ok().body(new WhoAmIResponse("Session valid.", session.userId().getId()));
     }
 }

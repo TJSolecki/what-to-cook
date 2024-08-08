@@ -1,8 +1,13 @@
 package com.what.to.cook.utils;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.HttpStatus;
 
 public final class AuthUtils {
 
@@ -24,5 +29,19 @@ public final class AuthUtils {
         byte[] tokenBytes = new byte[32];
         random.nextBytes(tokenBytes);
         return Base64.getEncoder().encodeToString(tokenBytes);
+    }
+
+    public static Optional<String> getSessionToken(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return Optional.empty();
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("session-token")) {
+                return Optional.of(cookie.getValue());
+            }
+        }
+        return Optional.empty();
     }
 }

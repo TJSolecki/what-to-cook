@@ -7,11 +7,16 @@ import com.what.to.cook.json.RecipeJson;
 import com.what.to.cook.models.Instruction;
 import com.what.to.cook.models.Nutrition;
 import com.what.to.cook.models.Recipe;
+import com.what.to.cook.models.Session;
 import com.what.to.cook.repositories.InstructionRepository;
 import com.what.to.cook.repositories.NutritionRepository;
 import com.what.to.cook.repositories.RecipeRepository;
+import com.what.to.cook.repositories.SessionRepository;
 import com.what.to.cook.structs.RecipeDto;
 import com.what.to.cook.structs.RecipeRequest;
+import com.what.to.cook.utils.AuthUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +25,7 @@ import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +45,9 @@ public class RecipeController {
 
     @Autowired
     private final InstructionRepository instructionRepository;
+
+    @Autowired
+    private final SessionRepository sessionRepository;
 
     @PostMapping
     public void addRecipe(@RequestBody RecipeRequest requestBody) throws IOException {
@@ -64,7 +73,19 @@ public class RecipeController {
     }
 
     @GetMapping
-    public List<RecipeDto> getRecipes() {
+    public List<RecipeDto> getRecipes(HttpServletRequest request, HttpServletResponse response) {
+        String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
+        if (sessionToken == null) {
+            return null;
+        }
+
+        Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
+        if (session == null) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return null;
+        }
+        Integer userId = session.userId().getId();
+
         return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
             .map(recipe -> {
                 Nutrition nutrition = null;
