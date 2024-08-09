@@ -6,7 +6,7 @@
   type $$Props = Props;
   type $$Events = Events;
 
-  let className: $$Props["class"] = undefined;
+  let className: $$Props["class"];
   export let variant: $$Props["variant"] = "default";
   export let size: $$Props["size"] = "default";
   export let builders: $$Props["builders"] = [];

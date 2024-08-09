@@ -5,8 +5,8 @@
   type $$Props = SwitchPrimitive.Props;
   type $$Events = SwitchPrimitive.Events;
 
-  let className: $$Props["class"] = undefined;
-  export let checked: $$Props["checked"] = undefined;
+  let className: $$Props["class"];
+  export let checked: $$Props["checked"];
   export { className as class };
 </script>
 
