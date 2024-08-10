@@ -15,6 +15,7 @@ import com.what.to.cook.repositories.SessionRepository;
 import com.what.to.cook.structs.RecipeDto;
 import com.what.to.cook.structs.RecipeRequest;
 import com.what.to.cook.utils.AuthUtils;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,11 +27,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RequestMapping(path = "/api/recipe")
@@ -72,19 +69,23 @@ public class RecipeController {
         }
     }
 
-    @GetMapping
-    public List<RecipeDto> getRecipes(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/{userId}")
+    public List<RecipeDto> getRecipes(
+        @Nullable @PathVariable Integer userId,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
         String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
-        if (sessionToken == null) {
+        if (sessionToken == null && userId == null) {
             return null;
         }
 
         Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
-        if (session == null) {
+        if (session == null && userId == null) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return null;
         }
-        Integer userId = session.userId().getId();
+        userId = userId != null ? userId : session.userId().getId();
 
         return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
             .map(recipe -> {

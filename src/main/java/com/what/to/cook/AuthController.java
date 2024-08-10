@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +31,17 @@ public class AuthController {
     private SessionRepository sessionRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(
-        @RequestParam String email,
-        @RequestParam String password,
-        HttpServletResponse response
-    ) {
+    public AuthResponse registerUser(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+        String email = authRequest.email();
+        String password = authRequest.password();
         if (!AuthUtils.isValidEmail(email)) {
-            return ResponseEntity.badRequest().body("Invalid email address");
+            response.setStatus(400);
+            return new AuthResponse("Invalid email address");
         }
 
         if (userRepository.findByEmail(email).orElse(null) != null) {
-            return ResponseEntity.badRequest().body("Email already in use");
+            response.setStatus(400);
+            return new AuthResponse("Email already in use");
         }
 
         String salt = AuthUtils.generateSalt();
@@ -52,28 +53,39 @@ public class AuthController {
         sessionRepository.save(new Session(sessionToken, AggregateReference.to(user.getId())));
         response.addCookie(new Cookie("session-token", sessionToken));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+        response.setStatus(HttpStatus.CREATED.value());
+        return new AuthResponse("User created successfully", user.getId());
     }
 
+    record AuthRequest(String email, String password) {}
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(
-        @RequestParam String email,
-        @RequestParam String password,
-        HttpServletResponse response
-    ) {
+    public AuthResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
+        String email = authRequest.email();
+        String password = authRequest.password();
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            return ResponseEntity.badRequest().body("Invalid email or password");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new AuthResponse("Invalid email or password");
         }
 
         String inputPasswordHash = AuthUtils.hashPassword(password, user.getSalt());
         if (!inputPasswordHash.equals(user.getPasswordHash())) {
-            return ResponseEntity.badRequest().body("Invalid email or password");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new AuthResponse("Invalid email or password");
+        }
+
+        Session existingSessionForUser = sessionRepository
+            .findByUserId(AggregateReference.to(user.getId()))
+            .orElse(null);
+        if (existingSessionForUser != null) {
+            sessionRepository.delete(existingSessionForUser);
         }
 
         String sessionToken = AuthUtils.generateSessionToken();
+        sessionRepository.save(new Session(sessionToken, AggregateReference.to(user.getId())));
         response.addCookie(new Cookie("session-token", sessionToken));
-        return ResponseEntity.ok("Logged in successfully");
+        return new AuthResponse("Logged in successfully", user.getId());
     }
 
     @PostMapping("/logout")
@@ -102,33 +114,32 @@ public class AuthController {
         return ResponseEntity.badRequest().body("Invalid session token");
     }
 
+    @GetMapping("/who-am-i")
+    public ResponseEntity<AuthResponse> whoAmI(HttpServletRequest request, HttpServletResponse response) {
+        String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
+        if (sessionToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("No session token provided."));
+        }
+
+        Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new AuthResponse("Session token found, but not valid.")
+            );
+        }
+
+        return ResponseEntity.ok().body(new AuthResponse("Session valid.", session.userId().getId()));
+    }
+
     @AllArgsConstructor
     @RequiredArgsConstructor
-    public static class WhoAmIResponse {
+    @Data
+    class AuthResponse {
 
         @NonNull
         String message;
 
         @Nullable
         Integer userId;
-    }
-
-    @GetMapping("/who-am-i")
-    public ResponseEntity<WhoAmIResponse> whoAmI(HttpServletRequest request, HttpServletResponse response) {
-        String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
-        if (sessionToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                new WhoAmIResponse("No session token provided.")
-            );
-        }
-
-        Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                new WhoAmIResponse("Session token found, but not valid.")
-            );
-        }
-
-        return ResponseEntity.ok().body(new WhoAmIResponse("Session valid.", session.userId().getId()));
     }
 }

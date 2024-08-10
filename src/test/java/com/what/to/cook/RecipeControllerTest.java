@@ -32,12 +32,6 @@ public class RecipeControllerTest {
     }
 
     @Test
-    void getShouldReturnForbiddenStatusWithNoSession() {
-        ResponseEntity<String> response = rest.getForEntity("/api/recipe", String.class);
-        assertEquals(response.getStatusCode().value(), 403);
-    }
-
-    @Test
     void postShouldPersistRecipeToDb() {
         ResponseEntity<String> response = rest.postForEntity(
             "/api/recipe",
@@ -45,7 +39,7 @@ public class RecipeControllerTest {
             String.class
         );
         ResponseEntity<ArrayList<Recipe>> res = (ResponseEntity<ArrayList<Recipe>>) rest.getForEntity(
-            "/api/recipe",
+            "/api/recipe/1",
             new ArrayList<Recipe>().getClass()
         );
         assertFalse(Objects.requireNonNull(res.getBody()).isEmpty());

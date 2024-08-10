@@ -22,24 +22,19 @@ final class AuthControllerTest {
 
     @Test
     void registerShouldRegisterUserAndReturnValidSession() throws Exception {
-        String email = "test44@example.com";
-        String password = "password123";
-
         MvcResult result = mockMvc
             .perform(
                 MockMvcRequestBuilders.post("/api/auth/register")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("email", email)
-                    .param("password", password)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {"email": "test44@example.com", "password": "password123"}
+                        """
+                    )
             )
             .andExpect(MockMvcResultMatchers.status().isCreated())
             .andExpect(MockMvcResultMatchers.cookie().exists("session-token"))
             .andReturn();
-
-        Cookie sessionToken = result.getResponse().getCookie("session-token");
-        mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/recipe").cookie(sessionToken))
-            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -50,35 +45,47 @@ final class AuthControllerTest {
         mockMvc
             .perform(
                 MockMvcRequestBuilders.post("/api/auth/register")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("email", email)
-                    .param("password", password)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {"email": "test44@", "password": "password123"}
+                                """
+                    )
             )
             .andExpect(MockMvcResultMatchers.status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.content().string("Invalid email address"));
+            .andExpect(
+                MockMvcResultMatchers.content()
+                    .json(
+                        """
+                        {"message": "Invalid email address"}
+                        """
+                    )
+            );
     }
 
     @Test
     void testRegisterExistingEmail() throws Exception {
-        String email = "existing@example.com";
-        String password = "password123";
-
+        String json =
+            """
+            {"email": "existing@example.com", "password": "password123"}
+            """;
         // Create a user with the same email before testing
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("email", email)
-                .param("password", password)
+            MockMvcRequestBuilders.post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(json)
         );
 
         mockMvc
             .perform(
-                MockMvcRequestBuilders.post("/api/auth/register")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("email", email)
-                    .param("password", password)
+                MockMvcRequestBuilders.post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(json)
             )
             .andExpect(MockMvcResultMatchers.status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.content().string("Email already in use"));
+            .andExpect(
+                MockMvcResultMatchers.content()
+                    .json(
+                        """
+                        {"message": "Email already in use"}
+                        """
+                    )
+            );
     }
 }
