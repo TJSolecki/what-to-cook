@@ -1,8 +1,11 @@
 import { toast } from "svelte-sonner";
+import type { AuthResponse } from "src/types/types";
+import { navigate } from "svelte-routing";
+import { userId } from "../../stores";
 
 type RequestOptions<T> = {
     method?: "GET" | "POST";
-    json?: T;
+    json?: Object;
 };
 
 export async function sendRequest<T>(
@@ -11,7 +14,7 @@ export async function sendRequest<T>(
 ): Promise<T> {
     const { method = "GET", json } = options;
 
-    const headers = new Headers({ Accept: "application/json" });
+    const headers = new Headers();
     if (json) {
         headers.append("Content-Type", "application/json");
     }
@@ -29,4 +32,19 @@ export async function sendRequest<T>(
     const description = `${method} request to ${url} failed with ${res.status} ${res.statusText}`;
     toast.error("Error", { description });
     throw new Error(description);
+}
+
+export async function onAuthFormSubmit(
+    endpoint: "login" | "register",
+    hashedPassword: string,
+    email: string,
+) {
+    const res = await sendRequest<AuthResponse>(`/api/auth/${endpoint}`, {
+        method: "POST",
+        json: { email, password: hashedPassword },
+    });
+    if (res?.userId !== undefined) {
+        userId.set(res.userId);
+        navigate("/");
+    }
 }

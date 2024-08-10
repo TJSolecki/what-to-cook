@@ -1,14 +1,6 @@
-export type Recipe = {
-    id: number;
-    imageUrl: string;
-    name: string;
-    author: string;
-    cookTime: string;
-    prepTime: string;
-    totalTime: string;
-    recipeUrl: string;
-    recipeYield: string;
-    nutrition: Nutrition;
+export type AuthResponse = {
+    message: string;
+    userId?: number;
 };
 
 export type Nutrition = {
@@ -24,4 +16,17 @@ export type Nutrition = {
     sugarContent: string;
     unsaturatedFatContent: string;
     servingSize: string;
+};
+
+export type Recipe = {
+    id: number;
+    imageUrl: string;
+    name: string;
+    author: string;
+    cookTime: string;
+    prepTime: string;
+    totalTime: string;
+    recipeUrl: string;
+    recipeYield: string;
+    nutrition: Nutrition;
 };

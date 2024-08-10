@@ -5,10 +5,9 @@
     import { Switch } from "$lib/components/ui/switch";
     import Recipes from "$lib/components/Recipes.svelte";
     import { Router, Route } from "svelte-routing";
-    import Login from "$lib/components/Login.svelte";
-    import Register from "$lib/components/Register.svelte";
     import { CookingPot } from "lucide-svelte";
     import { Toaster } from "svelte-sonner";
+    import AuthPrompt from "$lib/components/AuthPrompt.svelte";
 </script>
 
 <ModeWatcher />
@@ -42,10 +41,10 @@
             <Recipes />
         </Route>
         <Route path="/login">
-            <Login />
+            <AuthPrompt authType="login" />
         </Route>
         <Route path="/register">
-            <Register />
+            <AuthPrompt authType="register" />
         </Route>
     </main>
 </Router>
