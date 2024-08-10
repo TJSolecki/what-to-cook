@@ -11,53 +11,54 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
+    baseDirectory: __dirname,
+    recommendedConfig: js.configs.recommended,
+    allConfig: js.configs.all,
 });
 
 export default [
-  ...compat.extends(
-    "airbnb-base/legacy",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:svelte/recommended",
-    "prettier",
-  ),
-  {
-    plugins: {
-      "@typescript-eslint": typescriptEslint,
-      svelte,
+    ...compat.extends(
+        "airbnb-base/legacy",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:svelte/recommended",
+        "prettier",
+    ),
+    ...svelte.configs["flat/recommended"],
+    {
+        plugins: {
+            "@typescript-eslint": typescriptEslint,
+            svelte,
+        },
+
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                ...globals.node,
+            },
+
+            parser: tsParser,
+            ecmaVersion: 2020,
+            sourceType: "module",
+
+            parserOptions: {
+                extraFileExtensions: [".svelte"],
+            },
+        },
+
+        rules: {},
     },
+    {
+        files: ["**/*.svelte"],
 
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
+        languageOptions: {
+            parser: parser,
+            ecmaVersion: 5,
+            sourceType: "script",
 
-      parser: tsParser,
-      ecmaVersion: 2020,
-      sourceType: "module",
-
-      parserOptions: {
-        extraFileExtensions: [".svelte"],
-      },
+            parserOptions: {
+                parser: "@typescript-eslint/parser",
+            },
+        },
     },
-
-    rules: {},
-  },
-  {
-    files: ["**/*.svelte"],
-
-    languageOptions: {
-      parser: parser,
-      ecmaVersion: 5,
-      sourceType: "script",
-
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-      },
-    },
-  },
 ];

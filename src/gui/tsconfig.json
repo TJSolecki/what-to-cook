@@ -1,20 +1,20 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "compilerOptions": {
-    "allowJs": true,
-    "baseUrl": ".",
-    "checkJs": true,
-    "isolatedModules": true,
-    "module": "esnext",
-    "moduleDetection": "force",
-    "paths": {
-      "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "baseUrl": ".",
+        "checkJs": true,
+        "isolatedModules": true,
+        "module": "esnext",
+        "moduleDetection": "force",
+        "paths": {
+            "$lib": ["./src/lib"],
+            "$lib/*": ["./src/lib/*"]
+        },
+        "resolveJsonModule": true,
+        "target": "es2022",
+        "useDefineForClassFields": true
     },
-    "resolveJsonModule": true,
-    "target": "es2022",
-    "useDefineForClassFields": true
-  },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }
