@@ -15,6 +15,11 @@
         "target": "es2022",
         "useDefineForClassFields": true
     },
-    "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/lib/**/*.svelte"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.js",
+        "src/**/*.svelte",
+        "src/lib/**/*.svelte"
+    ],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

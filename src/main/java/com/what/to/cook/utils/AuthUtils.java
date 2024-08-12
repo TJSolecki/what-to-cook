@@ -35,6 +35,7 @@ public final class AuthUtils {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setHeader("message", "No session cookie found");
             return Optional.empty();
         }
         for (Cookie cookie : cookies) {
@@ -42,6 +43,8 @@ public final class AuthUtils {
                 return Optional.of(cookie.getValue());
             }
         }
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setHeader("message", "No session cookie found");
         return Optional.empty();
     }
 }

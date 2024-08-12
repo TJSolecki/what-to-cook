@@ -7,14 +7,12 @@ import com.what.to.cook.json.RecipeJson;
 import com.what.to.cook.models.Instruction;
 import com.what.to.cook.models.Nutrition;
 import com.what.to.cook.models.Recipe;
-import com.what.to.cook.models.Session;
 import com.what.to.cook.repositories.InstructionRepository;
 import com.what.to.cook.repositories.NutritionRepository;
 import com.what.to.cook.repositories.RecipeRepository;
 import com.what.to.cook.repositories.SessionRepository;
 import com.what.to.cook.structs.RecipeDto;
 import com.what.to.cook.structs.RecipeRequest;
-import com.what.to.cook.utils.AuthUtils;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,7 +45,12 @@ public class RecipeController {
     private final SessionRepository sessionRepository;
 
     @PostMapping
-    public void addRecipe(@RequestBody RecipeRequest requestBody) throws IOException {
+    public void addRecipe(@RequestBody RecipeRequest requestBody, HttpServletResponse response) throws IOException {
+        if (requestBody.cookbookId() == null) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setHeader("message", "Cookbook ID missing from request body");
+            return;
+        }
         RecipeJson recipeJson = getRecipeFromUrl(requestBody.url());
         Recipe recipe = Recipe.fromRecipeJson(recipeJson);
         Nutrition nutrition = Nutrition.fromJson(recipeJson.nutrition());
@@ -67,26 +70,15 @@ public class RecipeController {
             );
             instructionRepository.save(instruction);
         }
+
+        response.setStatus(HttpStatus.CREATED.value());
     }
 
-    @GetMapping("/{userId}")
     public List<RecipeDto> getRecipes(
         @Nullable @PathVariable Integer userId,
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        String sessionToken = AuthUtils.getSessionToken(request, response).orElse(null);
-        if (sessionToken == null && userId == null) {
-            return null;
-        }
-
-        Session session = sessionRepository.findBySessionToken(sessionToken).orElse(null);
-        if (session == null && userId == null) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return null;
-        }
-        userId = userId != null ? userId : session.userId().getId();
-
         return StreamSupport.stream(recipeRepository.findAll().spliterator(), false)
             .map(recipe -> {
                 Nutrition nutrition = null;

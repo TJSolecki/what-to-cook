@@ -23,6 +23,7 @@ public class Recipe {
     private String recipeUrl;
     private String recipeYield;
     private AggregateReference<Nutrition, Integer> nutritionId;
+    private AggregateReference<Cookbook, Integer> cookbookId;
 
     public static Recipe fromRecipeJson(RecipeJson recipeJson) {
         return builder()

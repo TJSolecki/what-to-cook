@@ -1,3 +1,9 @@
 package com.what.to.cook.structs;
 
-public record RecipeRequest(String url) {}
+import jakarta.annotation.Nullable;
+
+public record RecipeRequest(String url, @Nullable Integer cookbookId) {
+    public RecipeRequest(String url) {
+        this(url, null);
+    }
+}
