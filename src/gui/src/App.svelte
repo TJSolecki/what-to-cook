@@ -8,6 +8,7 @@
     import { CookingPot } from "lucide-svelte";
     import { Toaster } from "svelte-sonner";
     import AuthPrompt from "$lib/components/AuthPrompt.svelte";
+    import Home from "$lib/views/Home.svelte";
 </script>
 
 <ModeWatcher />
@@ -37,6 +38,9 @@
         </div>
     </header>
     <main class="max-w-screen-xl w-[80%] mx-auto py-4">
+        <Route path="/">
+            <Home />
+        </Route>
         <Route path="/recipes">
             <Recipes />
         </Route>
